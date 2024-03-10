@@ -112,6 +112,10 @@ if ! shopt -oq posix; then
   fi
 fi
 
+alias NS="sudo /home/pi/joycontrol/run_controller_cli.py PRO_CONTROLLER -r BC:CE:25:34:3D:99"
+
 export PATH=$PATH:/home/pi/.local/bin
+
+export LS_COLORS="$(vivid generate dracula)"
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
