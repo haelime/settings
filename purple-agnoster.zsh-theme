@@ -65,11 +65,7 @@ prompt_segment() {
   local bg fg
   [[ -n $1 ]] && bg="%K{$1}" || bg="%k"
   [[ -n $2 ]] && fg="%F{$2}" || fg="\033[0;38;2;189;147;249m"
-  if [[ $CURRENT_BG != 'NONE' && $1 != $CURRENT_BG ]]; then
-    echo -n " %{$bg%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR%{$fg%} "
-  else
-    echo -n "%{$bg%}%{$fg%} "
-  fi
+  echo -n "%{$bg%}%{$fg%}"
   CURRENT_BG=$1
   [[ -n $3 ]] && echo -n $3
 }
@@ -91,7 +87,7 @@ prompt_end() {
 # Context: user@hostname (who am I and where am I)
 prompt_context() {
   if [[ "$USERNAME" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-    prompt_segment "" "" "%(!.%{%F{yellow}%}.)%n@%m"
+    prompt_segment "" "" "%(!.%{%F{yellow}%}.)%n@%m "
   fi
 }
 
@@ -150,7 +146,7 @@ prompt_git() {
     zstyle ':vcs_info:*' formats ' %u%c'
     zstyle ':vcs_info:*' actionformats ' %u%c'
     vcs_info
-    echo -n "${${ref:gs/%/%%}/refs\/heads\//$PL_BRANCH_CHAR }${vcs_info_msg_0_%% }${mode}"
+    echo -n " ${${ref:gs/%/%%}/refs\/heads\//$PL_BRANCH_CHAR }${vcs_info_msg_0_%% }${mode}"
   fi
 }
 
@@ -225,7 +221,8 @@ prompt_dir() {
 # Virtualenv: current working virtualenv
 prompt_virtualenv() {
   if [[ -n "$VIRTUAL_ENV" && -n "$VIRTUAL_ENV_DISABLE_PROMPT" ]]; then
-    prompt_segment "" blue "(${VIRTUAL_ENV:t:gs/%/%%})"
+    prompt_segment default blue "(${VIRTUAL_ENV:t:gs/%/%%})"
+    echo -n " "
   fi
 }
 
@@ -240,7 +237,7 @@ prompt_status() {
   [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}⚡"
   [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}⚙"
 
-  [[ -n "$symbols" ]] && prompt_segment "" default "$symbols"
+  [[ -n "$symbols" ]] && echo -n "$symbols "
 }
 
 #AWS Profile:
@@ -252,7 +249,7 @@ prompt_aws() {
   [[ -z "$AWS_PROFILE" || "$SHOW_AWS_PROMPT" = false ]] && return
   case "$AWS_PROFILE" in
     *-prod|*production*) prompt_segment red yellow  "AWS: ${AWS_PROFILE:gs/%/%%}" ;;
-    *) prompt_segment "" green "AWS: ${AWS_PROFILE:gs/%/%%}" ;;
+    *) prompt_segment default green "AWS: ${AWS_PROFILE:gs/%/%%}" ;;
   esac
 }
 
