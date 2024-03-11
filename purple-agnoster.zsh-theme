@@ -89,7 +89,7 @@ prompt_end() {
 # Context: user@hostname (who am I and where am I)
 prompt_context() {
   if [[ "$USERNAME" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-    prompt_segment black magenta "%(!.%{%F{yellow}%}.)%n@%m"
+    prompt_segment black magenta "\\033[0;38;2;189;147;249m%(!.%{%F{yellow}%}.)%n@%m"
   fi
 }
 
@@ -111,7 +111,7 @@ prompt_git() {
     dirty=$(parse_git_dirty)
     ref=$(git symbolic-ref HEAD 2> /dev/null) || \
     ref="◈ $(git describe --exact-match --tags HEAD 2> /dev/null)" || \
-    ref="➦ $(git rev-parse --short HEAD 2> /dev/null)" 
+    ref="➦ $(git rev-parse --short HEAD 2> /dev/null)"
     if [[ -n $dirty ]]; then
       prompt_segment black yellow
     else

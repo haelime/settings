@@ -72,7 +72,7 @@ ENABLE_CORRECTION="true"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-	git 
+	git
 	zsh-syntax-highlighting
 )
 
@@ -106,5 +106,9 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 # alias norminette='norminette -R CheckForbiddenSourceHeader'
-# alias gcc='gcc -Wall -Wextra -Werror' 
-alias gpp='g++ -Wall -Wextra -Werror'
+# alias gcc='gcc -Wall -Wextra -Werror'
+# alias gpp='g++ -Wall -Wextra -Werror'
+
+source /Users/haeem/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
