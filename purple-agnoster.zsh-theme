@@ -32,6 +32,8 @@
 ### Segment drawing
 # A few utility functions to make it easy and re-usable to draw segmented prompts
 
+# github purple color code = \033[0;38;2;189;147;249m
+
 CURRENT_BG='NONE'
 
 case ${SOLARIZED_THEME:-dark} in
@@ -62,7 +64,7 @@ esac
 prompt_segment() {
   local bg fg
   [[ -n $1 ]] && bg="%K{$1}" || bg="%k"
-  [[ -n $2 ]] && fg="%F{$2}" || fg="%f"
+  [[ -n $2 ]] && fg="%F{$2}" || fg="\033[0;38;2;189;147;249m"
   if [[ $CURRENT_BG != 'NONE' && $1 != $CURRENT_BG ]]; then
     echo -n " %{$bg%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR%{$fg%} "
   else
@@ -75,7 +77,7 @@ prompt_segment() {
 # End the prompt, closing any open segments
 prompt_end() {
   if [[ -n $CURRENT_BG ]]; then
-    echo -n " %{%k%F{$CURRENT_BG}%}$SEGMENT_SEPARATOR"
+    echo -n " %{%k%F{$CURRENT_BG}%}"
   else
     echo -n "%{%k%}"
   fi
@@ -89,7 +91,7 @@ prompt_end() {
 # Context: user@hostname (who am I and where am I)
 prompt_context() {
   if [[ "$USERNAME" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-    prompt_segment black magenta "\\033[0;38;2;189;147;249m%(!.%{%F{yellow}%}.)%n@%m"
+    prompt_segment "" "" "%(!.%{%F{yellow}%}.)%n@%m"
   fi
 }
 
@@ -113,9 +115,9 @@ prompt_git() {
     ref="◈ $(git describe --exact-match --tags HEAD 2> /dev/null)" || \
     ref="➦ $(git rev-parse --short HEAD 2> /dev/null)"
     if [[ -n $dirty ]]; then
-      prompt_segment black yellow
+      prompt_segment "" yellow
     else
-      prompt_segment $CURRENT_FG green
+      prompt_segment "" green
     fi
 
     local ahead behind
@@ -168,12 +170,12 @@ prompt_bzr() {
     status_all=$(echo -n "$bzr_status" | head -n1 | wc -m)
     revision=${$(bzr log -r-1 --log-format line | cut -d: -f1):gs/%/%%}
     if [[ $status_mod -gt 0 ]] ; then
-      prompt_segment yellow black "bzr@$revision ✚"
+      prompt_segment "" yellow "bzr@$revision ✚"
     else
       if [[ $status_all -gt 0 ]] ; then
-        prompt_segment yellow black "bzr@$revision"
+        prompt_segment "" yellow "bzr@$revision"
       else
-        prompt_segment green black "bzr@$revision"
+        prompt_segment "" green "bzr@$revision"
       fi
     fi
   fi
@@ -186,11 +188,11 @@ prompt_hg() {
     if $(hg prompt >/dev/null 2>&1); then
       if [[ $(hg prompt "{status|unknown}") = "?" ]]; then
         # if files are not added
-        prompt_segment red white
+        prompt_segment "" white
         st='±'
       elif [[ -n $(hg prompt "{status|modified}") ]]; then
         # if any modification
-        prompt_segment yellow black
+        prompt_segment "" yellow
         st='±'
       else
         # if working copy is clean
@@ -202,13 +204,13 @@ prompt_hg() {
       rev=$(hg id -n 2>/dev/null | sed 's/[^-0-9]//g')
       branch=$(hg id -b 2>/dev/null)
       if `hg st | grep -q "^\?"`; then
-        prompt_segment red black
+        prompt_segment "" red
         st='±'
       elif `hg st | grep -q "^[MA]"`; then
-        prompt_segment yellow black
+        prompt_segment "" yellow
         st='±'
       else
-        prompt_segment $CURRENT_FG green
+        prompt_segment "" green
       fi
       echo -n "☿ ${rev:gs/%/%%}@${branch:gs/%/%%}" $st
     fi
@@ -217,13 +219,13 @@ prompt_hg() {
 
 # Dir: current working directory
 prompt_dir() {
-  prompt_segment $CURRENT_FG blue '%~'
+  prompt_segment "" blue '%~'
 }
 
 # Virtualenv: current working virtualenv
 prompt_virtualenv() {
   if [[ -n "$VIRTUAL_ENV" && -n "$VIRTUAL_ENV_DISABLE_PROMPT" ]]; then
-    prompt_segment blue black "(${VIRTUAL_ENV:t:gs/%/%%})"
+    prompt_segment "" blue "(${VIRTUAL_ENV:t:gs/%/%%})"
   fi
 }
 
@@ -238,7 +240,7 @@ prompt_status() {
   [[ $UID -eq 0 ]] && symbols+="%{%F{yellow}%}⚡"
   [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}⚙"
 
-  [[ -n "$symbols" ]] && prompt_segment black default "$symbols"
+  [[ -n "$symbols" ]] && prompt_segment "" default "$symbols"
 }
 
 #AWS Profile:
@@ -250,7 +252,7 @@ prompt_aws() {
   [[ -z "$AWS_PROFILE" || "$SHOW_AWS_PROMPT" = false ]] && return
   case "$AWS_PROFILE" in
     *-prod|*production*) prompt_segment red yellow  "AWS: ${AWS_PROFILE:gs/%/%%}" ;;
-    *) prompt_segment black green "AWS: ${AWS_PROFILE:gs/%/%%}" ;;
+    *) prompt_segment "" green "AWS: ${AWS_PROFILE:gs/%/%%}" ;;
   esac
 }
 
@@ -266,6 +268,7 @@ build_prompt() {
   prompt_bzr
   prompt_hg
   prompt_end
+  echo -n "%F{blue} $ "
 }
 
 PROMPT='%{%f%b%k%}$(build_prompt)'
