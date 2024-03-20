@@ -114,7 +114,7 @@ fi
 
 export PATH=$PATH:/home/pi/.local/bin
 
-// manual page coloring
+# manual page coloring
 export LESS_TERMCAP_mb=$'\e[01;31m'       # begin blinking
 export LESS_TERMCAP_md=$'\e[01;37m'       # begin bold
 export LESS_TERMCAP_me=$'\e[0m'           # end all mode like so, us, mb, md, mr
