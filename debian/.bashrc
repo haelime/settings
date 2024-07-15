@@ -112,7 +112,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export PATH=$PATH:/home/pi/.local/bin
+export PATH=$PATH:/home/$USER/.local/bin:/sbin
 
 # manual page coloring
 export LESS_TERMCAP_mb=$'\e[01;31m'       # begin blinking
